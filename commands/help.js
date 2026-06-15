@@ -89,8 +89,7 @@ module.exports = {
 
     await interaction.reply({
       embeds: [embed],
-      components: [row],
-      fetchReply: true
+      components: [row]
     });
 
     const filter = i => i.user.id === interaction.user.id;
@@ -107,26 +106,32 @@ module.exports = {
         currentPage++;
       }
 
-      const newEmbed = createHelpEmbed(interaction, currentPage);
-      await i.update({ 
-        embeds: [newEmbed], 
-        components: [row] 
-      });
-
-      // Update button states
+      // Update button states BEFORE sending
       row.components[0].setDisabled(currentPage === 0);
       row.components[1].setDisabled(currentPage === Object.keys(commandCategories).length - 1);
+
+      const newEmbed = createHelpEmbed(interaction, currentPage);
+      
+      try {
+        await i.update({ 
+          embeds: [newEmbed], 
+          components: [row] 
+        });
+      } catch (error) {
+        console.error('Error updating interaction:', error);
+      }
     });
 
     collector.on('end', async () => {
-      const message = await interaction.fetchReply();
-      if (message) {
+      try {
         const disabledRow = new ActionRowBuilder()
           .addComponents(
             ButtonBuilder.from(row.components[0]).setDisabled(true),
             ButtonBuilder.from(row.components[1]).setDisabled(true)
           );
         await interaction.editReply({ components: [disabledRow] });
+      } catch (error) {
+        // Message might have been deleted
       }
     });
   },

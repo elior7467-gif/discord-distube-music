@@ -4,7 +4,7 @@
  * Support Server: https://discord.gg/EWr3GgP6fe
  */
 
-const { Events } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const { errorEmbed, infoEmbed } = require('../utils/embeds');
 
 module.exports = {
@@ -19,21 +19,21 @@ module.exports = {
           case 'support':
             await interaction.reply({ 
               embeds: [infoEmbed('Join our support server for help with the bot!')], 
-              ephemeral: true 
+              flags: [MessageFlags.Ephemeral] 
             });
             break;
             
           case 'invite':
             await interaction.reply({ 
               embeds: [infoEmbed('Thanks for wanting to invite the bot to your server!')], 
-              ephemeral: true 
+              flags: [MessageFlags.Ephemeral] 
             });
             break;
             
           default:
             await interaction.reply({ 
               embeds: [errorEmbed('This button is not yet implemented.')], 
-              ephemeral: true 
+              flags: [MessageFlags.Ephemeral] 
             });
         }
         
@@ -42,7 +42,7 @@ module.exports = {
         console.error('Error handling button interaction:', error);
         await interaction.reply({ 
           embeds: [errorEmbed('There was an error while processing this button!')], 
-          ephemeral: true 
+          flags: [MessageFlags.Ephemeral] 
         });
         return;
       }
@@ -67,9 +67,9 @@ module.exports = {
       const errorMessage = 'There was an error while executing this command!';
       
       if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({ embeds: [errorEmbed(errorMessage)], ephemeral: true });
+        await interaction.followUp({ embeds: [errorEmbed(errorMessage)], flags: [MessageFlags.Ephemeral] });
       } else {
-        await interaction.reply({ embeds: [errorEmbed(errorMessage)], ephemeral: true });
+        await interaction.reply({ embeds: [errorEmbed(errorMessage)], flags: [MessageFlags.Ephemeral] });
       }
     }
   },
